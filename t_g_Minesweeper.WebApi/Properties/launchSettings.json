@@ -12,7 +12,7 @@
     "t_g_Minesweeper.WebApi": {
       "commandName": "Project",
       "dotnetRunMessages": true,
-      "launchBrowser": true,
+      "launchBrowser": false,
       "launchUrl": "swagger",
       "applicationUrl": "https://localhost:8031",
       "environmentVariables": {

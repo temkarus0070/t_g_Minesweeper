@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
+using t_g_Minesweeper.WebApi.services;
 
 namespace t_g_Minesweeper.WebApi.models
 {
@@ -15,6 +16,7 @@ namespace t_g_Minesweeper.WebApi.models
         [JsonPropertyName("mines_count")]
         [Required]
         public int MinesCount { get; set; }
+        [JsonConverter(typeof(MatrixConverter))]
         public string[,] Field { get; set; }
         public bool Completed { get; set; }
 

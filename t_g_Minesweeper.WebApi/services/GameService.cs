@@ -40,7 +40,7 @@ namespace t_g_Minesweeper.WebApi.services
 
                 }
                 while (row == gameAction.Row && column == gameAction.Column);
-                game.InternalField[row, column] = "X";
+                game.InternalField[column,row] = "X";
             }
 
 
@@ -50,9 +50,9 @@ namespace t_g_Minesweeper.WebApi.services
             HashSet<Point> adjustedPointsFromAdjustedPoints = new HashSet<Point>();
             foreach (var point in GetAdjustedPoints(game, gameAction.Row, gameAction.Column))
             {
-                if (game.InternalField[point.Y, point.X] != "X")
+                if (game.InternalField[point.X,point.Y] != "X")
                 {
-                    game.Field[point.Y, point.X] = "0";
+                    game.Field[point.X,point.Y] = "0";
 
                     game.OpenedPointsCount++;
                 }
@@ -72,15 +72,15 @@ namespace t_g_Minesweeper.WebApi.services
         {
             foreach (var point in points)
             {
-                if (game.InternalField[point.Y, point.X] != "X")
+                if (game.InternalField[point.X,point.Y] != "X")
                 {
                     int minesCount = 0;
                     foreach (var adjustedPoint in GetAdjustedPoints(game, point.Y, point.X))
                     {
-                        if (game.InternalField[adjustedPoint.Y, adjustedPoint.X] == "X")
+                        if (game.InternalField[adjustedPoint.X, adjustedPoint.Y] == "X")
                             minesCount++;
                     }
-                    game.Field[point.Y, point.X] = minesCount.ToString();
+                    game.Field[point.X,point.Y] = minesCount.ToString();
                 }
             }
         }
@@ -123,11 +123,24 @@ namespace t_g_Minesweeper.WebApi.services
             InternalGame internalGame;
             if (games.TryGetValue(gameAction.GameId, out internalGame))
             {
+                if (internalGame.Height - 1 < gameAction.Row || internalGame.Width - 1 < gameAction.Column)
+                {
+                    throw new InvalidOperationException("Ваш ход вышел за пределы игрового поля");
+                }
+                if (internalGame.Completed)
+                {
+                    throw new InvalidOperationException("Нельзя делать ход после окончания игры");
+                }
                 if (!internalGame.IsPlayed)
                 {
                     Generate(internalGame, gameAction);
+                    internalGame.IsPlayed=true;
                 }
-                else if (internalGame.InternalField[gameAction.Row, gameAction.Column] == "X")
+                else if (internalGame.Field[gameAction.Row,gameAction.Column]!=" ")
+                {
+                    throw new InvalidOperationException("Данная ячейка уже проверена");
+                }
+                else if (internalGame.InternalField[gameAction.Column, gameAction.Row] == "X")
                 {
                     MarkMines(internalGame, "X");
                     internalGame.Completed = true;

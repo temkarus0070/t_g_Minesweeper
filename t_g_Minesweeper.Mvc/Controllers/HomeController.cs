@@ -24,7 +24,7 @@ namespace t_g_Minesweeper.Mvc.Controllers
         [HttpGet]
         public async Task<IActionResult> New(int minesCount, int height,int width)
         {
-            Game newGame = await _gameApiService.Create(new Game() { Height=height, MinesCount=minesCount, Width=width});
+            Game newGame = await _gameApiService.Create(new NewGameRequest() { Height=height, MinesCount=minesCount, Width=width});
             var gameStr = _gameApiService.GetGame(newGame);
             ViewData["game"] = gameStr;
             ViewData["gameId"] = newGame.GameId.ToString();
