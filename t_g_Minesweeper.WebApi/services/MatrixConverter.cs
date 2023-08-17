@@ -8,15 +8,15 @@ namespace t_g_Minesweeper.WebApi.services
     {
         public override string[,]? Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
         {
-           
-            var arr=JsonSerializer.Deserialize<string[][]>(JsonDocument.ParseValue(ref reader));
-            string[,]res= new string[arr.Length, arr[0].Length];
+
+            var arr = JsonSerializer.Deserialize<string[][]>(JsonDocument.ParseValue(ref reader));
+            string[,] res = new string[arr.Length, arr[0].Length];
             for (int i = 0; i < res.GetLength(0); i++)
             {
                 for (int j = 0; j < res.GetLength(1); j++)
                 {
 
-                    res[i,j]= arr[i][j];
+                    res[i, j] = arr[i][j];
                 }
             }
             return res;

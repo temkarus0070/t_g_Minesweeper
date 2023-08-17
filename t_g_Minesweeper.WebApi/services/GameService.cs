@@ -10,7 +10,12 @@ namespace t_g_Minesweeper.WebApi.services
 
         public Game CreateWithNewGuid(NewGameRequest newGame)
         {
+            if (newGame.MinesCount >= newGame.Width * newGame.Height)
+            {
+                throw new InvalidOperationException("Нельзя устанавливать количество мин больше или равно кол-ву клеток в игровом поле");
+            }
             var internalGame = new InternalGame(newGame);
+
             internalGame.GameId = Guid.NewGuid();
             games[internalGame.GameId] = internalGame;
             internalGame.Field = new string[internalGame.Width, internalGame.Height];
@@ -27,64 +32,78 @@ namespace t_g_Minesweeper.WebApi.services
 
         private void Generate(InternalGame game, GameAction gameAction)
         {
-
             Random rnd = Random.Shared;
             HashSet<Point> generatedPoints = new();
+            generatedPoints.Add(new Point(gameAction.Column, gameAction.Row));
             for (int i = 0; i < game.MinesCount; i++)
             {
                 int row = 0;
                 int column = 0;
-                Point currentPoint=new Point();
+                Point currentPoint = new Point();
                 do
                 {
                     row = rnd.Next(game.Height);
                     column = rnd.Next(game.Width);
                     currentPoint = new Point(column, row);
                 }
-                while (row == gameAction.Row && column == gameAction.Column || generatedPoints.Contains(currentPoint));
+                while (generatedPoints.Contains(currentPoint));
                 generatedPoints.Add(currentPoint);
-                game.InternalField[column,row] = "X";
+                game.InternalField[row, column] = "X";
+            }
+
+            for (int i = 0; i < game.Height; i++)
+            {
+                for (int j = 0; j < game.Width; j++)
+                {
+                    NumerateMines(game, i, j);
+                }
             }
 
 
             game.OpenedPointsCount++;
-
-            HashSet<Point> points = new HashSet<Point>();
-            HashSet<Point> adjustedPointsFromAdjustedPoints = new HashSet<Point>();
+            game.Field[gameAction.Row, gameAction.Column] = game.InternalField[gameAction.Row, gameAction.Column];
+            HashSet<Point> adjustedPointsToPlayerAction = new HashSet<Point>();
+            HashSet<Point> adjustedPointsToAdjustedPoints = new HashSet<Point>();
             foreach (var point in GetAdjustedPoints(game, gameAction.Row, gameAction.Column))
             {
-                if (game.InternalField[point.X,point.Y] != "X")
+                if (game.InternalField[point.Y, point.X] == "0")
                 {
-                    game.Field[point.X,point.Y] = "0";
+                    game.Field[point.Y, point.X] = "0";
 
                     game.OpenedPointsCount++;
                 }
-                points.Add(point);
+                adjustedPointsToPlayerAction.Add(point);
                 foreach (var adjustedPoint in GetAdjustedPoints(game, point.Y, point.X))
                 {
-                    adjustedPointsFromAdjustedPoints.Add(adjustedPoint);
+                    adjustedPointsToAdjustedPoints.Add(adjustedPoint);
                 }
             }
-            adjustedPointsFromAdjustedPoints = adjustedPointsFromAdjustedPoints.Except(points).ToHashSet();
-            game.OpenedPointsCount += adjustedPointsFromAdjustedPoints.Count;
-            NumerateMines(game, adjustedPointsFromAdjustedPoints);
+            adjustedPointsToAdjustedPoints = adjustedPointsToAdjustedPoints.Except(adjustedPointsToPlayerAction).ToHashSet();
+            foreach (var point in adjustedPointsToAdjustedPoints)
+            {
+                if (game.InternalField[point.Y, point.X] == "0")
+                {
+                    game.Field[point.Y, point.X] = "0";
+
+                    game.OpenedPointsCount++;
+                }
+            }
 
         }
 
-        private void NumerateMines(InternalGame game, IEnumerable<Point> points)
+
+        private void NumerateMines(InternalGame game, int row, int column)
         {
-            foreach (var point in points)
+
+            if (game.InternalField[row, column] != "X")
             {
-                if (game.InternalField[point.X,point.Y] != "X")
+                int minesCount = 0;
+                foreach (var adjustedPoint in GetAdjustedPoints(game, row, column))
                 {
-                    int minesCount = 0;
-                    foreach (var adjustedPoint in GetAdjustedPoints(game, point.Y, point.X))
-                    {
-                        if (game.InternalField[adjustedPoint.X, adjustedPoint.Y] == "X")
-                            minesCount++;
-                    }
-                    game.Field[point.X,point.Y] = minesCount.ToString();
+                    if (game.InternalField[adjustedPoint.Y, adjustedPoint.X] == "X")
+                        minesCount++;
                 }
+                game.InternalField[row, column] = minesCount.ToString();
             }
         }
 
@@ -126,7 +145,7 @@ namespace t_g_Minesweeper.WebApi.services
             InternalGame internalGame;
             if (games.TryGetValue(gameAction.GameId, out internalGame))
             {
-                if (internalGame.Height - 1 < gameAction.Row || internalGame.Width - 1 < gameAction.Column)
+                if (internalGame.Height - 1 < gameAction.Row || internalGame.Width - 1 < gameAction.Column || gameAction.Column < 0 || gameAction.Row < 0)
                 {
                     throw new InvalidOperationException("Ваш ход вышел за пределы игрового поля");
                 }
@@ -137,13 +156,13 @@ namespace t_g_Minesweeper.WebApi.services
                 if (!internalGame.IsPlayed)
                 {
                     Generate(internalGame, gameAction);
-                    internalGame.IsPlayed=true;
+                    internalGame.IsPlayed = true;
                 }
-                else if (internalGame.Field[gameAction.Row,gameAction.Column]!=" ")
+                else if (internalGame.Field[gameAction.Row, gameAction.Column] != " ")
                 {
                     throw new InvalidOperationException("Данная ячейка уже проверена");
                 }
-                else if (internalGame.InternalField[gameAction.Column, gameAction.Row] == "X")
+                else if (internalGame.InternalField[gameAction.Row, gameAction.Column] == "X")
                 {
                     MarkMines(internalGame, "X");
                     internalGame.Completed = true;
@@ -151,15 +170,14 @@ namespace t_g_Minesweeper.WebApi.services
                 else
                 {
                     internalGame.OpenedPointsCount++;
-                    NumerateMines(internalGame, new Point[] { new Point(gameAction.Column, gameAction.Row) });
-                    if (internalGame.OpenedPointsCount + internalGame.MinesCount == internalGame.InternalField.Length)
-                    {
-                        internalGame.Completed = true;
-                        MarkMines(internalGame, "M");
-                    }
+                    internalGame.Field[gameAction.Row, gameAction.Column] = internalGame.InternalField[gameAction.Row, gameAction.Column];
                 }
 
-
+                if (internalGame.OpenedPointsCount + internalGame.MinesCount == internalGame.InternalField.Length)
+                {
+                    internalGame.Completed = true;
+                    MarkMines(internalGame, "M");
+                }
                 return new Game(internalGame);
             }
             else throw new InvalidOperationException("не найдено игры с таким id");

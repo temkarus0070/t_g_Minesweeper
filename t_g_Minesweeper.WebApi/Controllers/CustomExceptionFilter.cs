@@ -7,10 +7,11 @@ using System.Text;
 using System.Text.Json;
 using System.Text.Encodings.Web;
 using System.Text.Unicode;
+using t_g_Minesweeper.WebApi.models;
 
 namespace t_g_Minesweeper.WebApi.Controllers
 {
-    public class CustomExceptionFilter :  Attribute, IExceptionFilter
+    public class CustomExceptionFilter : Attribute, IExceptionFilter
     {
         public void OnException(ExceptionContext actionExecutedContext)
         {
@@ -21,8 +22,8 @@ namespace t_g_Minesweeper.WebApi.Controllers
             };
 
             string exceptionMessage = actionExecutedContext.Exception.Message;
-            var error = new { error = exceptionMessage };
-           var str=JsonSerializer.Serialize(error,options1);
+            var error = new ErrorMessage() {Error = exceptionMessage };
+            var str = JsonSerializer.Serialize(error, options1);
             var response = new ContentResult()
             {
                 Content = str
@@ -34,7 +35,7 @@ namespace t_g_Minesweeper.WebApi.Controllers
 
                 response.StatusCode = 400;
             }
-            actionExecutedContext.Result= response;
+            actionExecutedContext.Result = response;
         }
 
     }

@@ -19,12 +19,17 @@ namespace t_g_Minesweeper.WebApi.Controllers
         }
 
         [HttpPost("new")]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(typeof(ErrorMessage),400)]
         public Game New([FromBody] NewGameRequest newGameRequest)
         {
             return gameService.CreateWithNewGuid(newGameRequest);
         }
 
         [HttpPost("turn")]
+
+        [ProducesResponseType(200)]
+        [ProducesResponseType(typeof(ErrorMessage), 400)]
         public Game Turn([FromBody] GameAction gameAction)
         {
             return gameService.DoGameAction(gameAction);

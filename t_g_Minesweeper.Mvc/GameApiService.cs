@@ -28,7 +28,11 @@ namespace t_g_Minesweeper.Mvc
                 header.Append(i + " ");
                 for (int j = 0; j < game.Field.GetLength(1); j++)
                 {
-                    header.Append(game.Field[i, j] + " ");
+                    if (game.Field[i, j] != " ")
+                    {
+                        header.Append(game.Field[i, j] + " ");
+                    }
+                    else header.Append("-" + " ");
                 }
                 result.Add(header.ToString());
                 header.Clear();
