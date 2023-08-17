@@ -5,9 +5,7 @@ VisualStudioVersion = 17.5.33502.453
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "t_g_Minesweeper.WebApi", "t_g_Minesweeper.WebApi\t_g_Minesweeper.WebApi.csproj", "{46D7D297-D586-48F0-8EF7-07BC54BEE881}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "t_g_Minesweeper.Test", "t_g_Minesweeper.Test\t_g_Minesweeper.Test.csproj", "{4FAB6D87-7676-40FF-A28C-99F1D51E14FF}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "t_g_Minesweeper.Mvc", "t_g_Minesweeper.Mvc\t_g_Minesweeper.Mvc.csproj", "{72286F04-35F2-4ABC-8289-2575C6CD89AA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "t_g_Minesweeper.Mvc", "t_g_Minesweeper.Mvc\t_g_Minesweeper.Mvc.csproj", "{72286F04-35F2-4ABC-8289-2575C6CD89AA}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -19,10 +17,6 @@ Global
 		{46D7D297-D586-48F0-8EF7-07BC54BEE881}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{46D7D297-D586-48F0-8EF7-07BC54BEE881}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{46D7D297-D586-48F0-8EF7-07BC54BEE881}.Release|Any CPU.Build.0 = Release|Any CPU
-		{4FAB6D87-7676-40FF-A28C-99F1D51E14FF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{4FAB6D87-7676-40FF-A28C-99F1D51E14FF}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{4FAB6D87-7676-40FF-A28C-99F1D51E14FF}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{4FAB6D87-7676-40FF-A28C-99F1D51E14FF}.Release|Any CPU.Build.0 = Release|Any CPU
 		{72286F04-35F2-4ABC-8289-2575C6CD89AA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{72286F04-35F2-4ABC-8289-2575C6CD89AA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{72286F04-35F2-4ABC-8289-2575C6CD89AA}.Release|Any CPU.ActiveCfg = Release|Any CPU
