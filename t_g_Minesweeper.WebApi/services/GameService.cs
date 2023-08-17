@@ -29,17 +29,20 @@ namespace t_g_Minesweeper.WebApi.services
         {
 
             Random rnd = Random.Shared;
+            HashSet<Point> generatedPoints = new();
             for (int i = 0; i < game.MinesCount; i++)
             {
                 int row = 0;
                 int column = 0;
+                Point currentPoint=new Point();
                 do
                 {
                     row = rnd.Next(game.Height);
                     column = rnd.Next(game.Width);
-
+                    currentPoint = new Point(column, row);
                 }
-                while (row == gameAction.Row && column == gameAction.Column);
+                while (row == gameAction.Row && column == gameAction.Column || generatedPoints.Contains(currentPoint));
+                generatedPoints.Add(currentPoint);
                 game.InternalField[column,row] = "X";
             }
 
