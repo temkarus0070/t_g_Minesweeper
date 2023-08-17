@@ -1,0 +1,14 @@
+﻿@{
+    ViewData["Title"] = "Home Page";
+}
+
+<form asp-action="new" method="get">
+    <label>rows</label>
+    <input type="number" name="height"/>
+    <label>columns</label>
+    <input type="number" name="width"/>
+    <label>mines count</label>
+    <input type="number" name="minesCount"/>
+    <input type="submit" value="get game"/>
+
+</form>
