@@ -193,6 +193,10 @@ namespace t_g_Minesweeper.WebApi.services
                     {
                         game.Field[i, j] = symbol;
                     }
+                    else
+                    {
+                        game.Field[i, j] = game.InternalField[i, j];
+                    }
                 }
             }
         }
