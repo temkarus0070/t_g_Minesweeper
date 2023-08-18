@@ -1,14 +1,15 @@
 ﻿@{
-    ViewData["Title"] = "Home Page";
+    ViewData["Title"] = "Сапёр";
 }
 
 <form asp-action="new" method="get">
-    <label>rows</label>
+    <label>высота уровня</label>
     <input type="number" name="height"/>
-    <label>columns</label>
+    <label>ширина уровня</label>
     <input type="number" name="width"/>
-    <label>mines count</label>
+    <label>кол-во мин</label>
     <input type="number" name="minesCount"/>
-    <input type="submit" value="get game"/>
+    <br/>
+    <input type="submit" value="Начать игру"/>
 
 </form>
